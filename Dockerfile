@@ -1,4 +1,2 @@
-FROM scratch
-ADD . /
+FROM golang:1.4-onbuild
 EXPOSE 80
-CMD ["/httpd", "80"]

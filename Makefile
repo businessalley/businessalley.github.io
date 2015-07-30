@@ -1,15 +1,34 @@
-DOCKER_IMAGE_VERSION=0.1.0
-DOCKER_IMAGE_NAME=aabs/clarity
-DOCKER_IMAGE_TAGNAME=$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_VERSION)
+NAME=clarity
+ORG=aabs
+CMD=/bin/bash
 
-default: build
+compile: build
 
 build:
-	docker build -t $(DOCKER_IMAGE_TAGNAME) .
-	docker tag -f $(DOCKER_IMAGE_TAGNAME) $(DOCKER_IMAGE_NAME):latest
+	docker build --rm -t "${ORG}/${NAME}" .
 
-push:
-	docker push $(DOCKER_IMAGE_NAME)
+run: compile
+	docker run  -d -p 80:3000 --name="${NAME}" ${ORG}/${NAME}
 
-run:
-	docker run -d -p 81:80 -d $(DOCKER_IMAGE_TAGNAME)
+restart: stop clean-containers run
+
+clean: stop clean-containers clean-images
+
+stop:
+	docker kill ${NAME}
+
+clean-containers:
+	docker ps -a | grep 'Exited' | awk '{print $$1}' | xargs docker rm
+
+clean-images:
+	docker images | grep "${NAME}" | awk '{print $$3}' | xargs docker rmi
+
+deploy:
+	git add -A
+	git commit -m "further edits"
+	git push github master
+
+tutum-push: build
+	docker login -u aabs -e matthews.andrew@gmail.com tutum.co
+	docker tag -f ${ORG}/${NAME}:latest tutum.co/${ORG}/${NAME}
+	docker push tutum.co/${ORG}/${NAME}
