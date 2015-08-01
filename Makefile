@@ -23,12 +23,14 @@ clean-containers:
 clean-images:
 	docker images | grep "${NAME}" | awk '{print $$3}' | xargs docker rmi
 
-deploy:
-	git add -A
-	git commit -m "further edits"
+deploy: save
 	git push github master
 
 tutum-push: build
 	docker login -u aabs -e matthews.andrew@gmail.com tutum.co
 	docker tag -f ${ORG}/${NAME}:latest tutum.co/${ORG}/${NAME}
 	docker push tutum.co/${ORG}/${NAME}
+
+save:
+	git add -A
+	git commit -m "further edits"
