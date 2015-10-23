@@ -329,6 +329,16 @@ ul.nostyle i {
 #services {
   padding: 100px 0 75px;
 }
+#media {
+  padding: 100px 0 75px;
+  background: #f5f5f5;
+}
+#financial {
+  padding: 100px 0 75px;
+}
+#admin {
+  padding: 100px 0 75px;
+}
 .media.service-box {
   margin: 25px 0;
 }
@@ -370,7 +380,6 @@ ul.nostyle i {
 }
 #portfolio {
   padding: 100px 0;
-  background: #f5f5f5;
 }
 #portfolio .portfolio-filter {
   list-style: none;
@@ -536,6 +545,7 @@ ul.nostyle i {
 }
 #about {
   padding: 100px 0;
+  background: #f5f5f5;
 }
 #work-process {
   padding: 100px 0 50px;
