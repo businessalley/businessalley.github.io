@@ -239,13 +239,13 @@ ul.nostyle i {
 }
 #main-slider .slider-inner h2 {
   margin-top: 180px;
-  font-size: 36px;
+  font-size: 40px;
   line-height: 1;
   text-transform: uppercase;
   color: #fff;
 }
 #main-slider .slider-inner h2 > span {
-  color: #45aed6;
+  color: red;
 }
 #main-slider .slider-inner .btn {
   margin-top: 10px;
