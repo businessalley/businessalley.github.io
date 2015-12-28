@@ -29,7 +29,7 @@ deploy: save google-deploy
 redeploy: google-undeploy deploy
 
 google-push: build
-	docker tag ${ORG}/${NAME} gcr.io/odoo-ba/${NAME}
+	docker tag -f ${ORG}/${NAME} gcr.io/odoo-ba/${NAME}
 	gcloud docker push gcr.io/odoo-ba/${NAME}
 
 save:
@@ -39,7 +39,7 @@ save:
 
 google-deploy: google-push
 	kubectl run ${SVCNAME} --image=gcr.io/odoo-ba/${NAME} --port=80
-    kubectl expose rc ${SVCNAME} --type="LoadBalancer"
+	kubectl expose rc ${SVCNAME} --type="LoadBalancer"
 
 google-undeploy: google-push
 	# First, delete the Service, which also deletes your external load balancer:
