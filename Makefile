@@ -40,6 +40,7 @@ save:
 google-deploy: google-push
 	kubectl run ${SVCNAME} --image=gcr.io/odoo-ba/${NAME} --port=80
 	kubectl expose rc ${SVCNAME} --type="LoadBalancer"
+	kubectl get svc ${SVCNAME} -o json | jq '.status.loadBalancer.ingress[0].ip'
 
 google-undeploy: google-push
 	# First, delete the Service, which also deletes your external load balancer:
