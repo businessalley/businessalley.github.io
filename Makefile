@@ -24,7 +24,7 @@ clean-containers:
 clean-images:
 	docker images | grep "${NAME}" | awk '{print $$3}' | xargs docker rmi
 
-deploy: save google-deploy
+deploy: google-deploy
 
 redeploy: google-undeploy deploy
 
@@ -40,6 +40,13 @@ save:
 google-deploy: google-push
 	kubectl run ${SVCNAME} --image=gcr.io/odoo-ba/${NAME} --port=80
 	kubectl expose rc ${SVCNAME} --type="LoadBalancer"
+
+	# SLEEPING for 2 minutes to give google time to start load balancer and containers
+	# ================================================================================
+	sleep 120
+
+	# Getting the external IP address to use for the domain registrar CNAME
+	# =====================================================================
 	kubectl get svc ${SVCNAME} -o json | jq '.status.loadBalancer.ingress[0].ip'
 
 google-undeploy: google-push
