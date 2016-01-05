@@ -6,13 +6,11 @@ PROJECTID=odoo-ba
 
 all: redeploy
 
-compile: build
-
 build:
 	docker build --rm -t "${ORG}/${NAME}" .
 
-run: compile
-	docker run  -d -p 80:3000 --name="${NAME}" ${ORG}/${NAME}
+run: build
+	docker run  -d -p 80:80 --name="${NAME}" ${ORG}/${NAME}
 
 restart: stop clean-containers run
 
@@ -34,6 +32,7 @@ redeploy: google-undeploy google-deploy
 
 google-push: build
 	docker tag -f ${ORG}/${NAME} gcr.io/${PROJECTID}/${NAME}
+	# gcloud docker rmi gcr.io/${PROJECTID}/${NAME}
 	gcloud docker push gcr.io/${PROJECTID}/${NAME}
 
 save:
@@ -65,3 +64,4 @@ google-undeploy:
 	# Delete the running pods with:
 	kubectl delete rc ${SVCNAME} --ignore-not-found=true
 	kubectl delete po ${SVCNAME} --ignore-not-found=true
+	
