@@ -2,6 +2,9 @@ NAME=www
 ORG=bizally
 CMD=/bin/bash
 SVCNAME=${ORG}${NAME}
+PROJECTID=odoo-ba
+
+all: redeploy
 
 compile: build
 
@@ -30,8 +33,8 @@ redeploy-no-push: google-undeploy google-deploy-no-push
 redeploy: google-undeploy google-deploy
 
 google-push: build
-	docker tag -f ${ORG}/${NAME} gcr.io/odoo-ba/${NAME}
-	gcloud docker push gcr.io/odoo-ba/${NAME}
+	docker tag -f ${ORG}/${NAME} gcr.io/${PROJECTID}/${NAME}
+	gcloud docker push gcr.io/${PROJECTID}/${NAME}
 
 save:
 	git add -A
@@ -39,17 +42,19 @@ save:
 	git push github master
 
 google-deploy-no-push:
-	kubectl run ${SVCNAME} --image=gcr.io/odoo-ba/${NAME} --port=80
+	kubectl run ${SVCNAME} --image=gcr.io/${PROJECTID}/${NAME} --port=80
 	kubectl expose rc ${SVCNAME} --type="LoadBalancer"
 
 google-deploy: google-push
-	kubectl run ${SVCNAME} --image=gcr.io/odoo-ba/${NAME} --port=80
+	kubectl run ${SVCNAME} --image=gcr.io/${PROJECTID}/${NAME} --port=80
 	kubectl expose rc ${SVCNAME} --type="LoadBalancer"
-
+	#
+	#
 	# SLEEPING for 5 minutes to give google time to start load balancer and containers
 	# ================================================================================
 	sleep 300
-
+	#
+	#
 	# Getting the external IP address to use for the domain registrar CNAME
 	# =====================================================================
 	kubectl get svc ${SVCNAME} -o json | jq '.status.loadBalancer.ingress[0].ip'
