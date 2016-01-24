@@ -235,17 +235,19 @@ ul.nostyle i {
   left: 0;
   width: 100%;
   height: 100%;
-  color: #fff;
+  color: black;
+  font-weight: bolder;
 }
+
 #main-slider .slider-inner h2 {
   margin-top: 180px;
   font-size: 40px;
   line-height: 1;
   text-transform: uppercase;
-  color: #fff;
+  color: #BF2F40;
 }
 #main-slider .slider-inner h2 > span {
-  color: dark blue;
+  color: #7b010f;
 }
 #main-slider .slider-inner .btn {
   margin-top: 10px;
