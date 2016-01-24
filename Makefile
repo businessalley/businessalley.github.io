@@ -2,7 +2,7 @@ NAME=www
 ORG=bizally
 CMD=/bin/bash
 SVCNAME=${ORG}${NAME}
-PROJECTID=odoo-ba
+PROJECTID=businessalley-site
 
 all: redeploy
 
@@ -10,7 +10,7 @@ build:
 	docker build --rm -t "${ORG}/${NAME}" .
 
 run: build
-	docker run  -d -p 80:80 --name="${NAME}" ${ORG}/${NAME}
+	docker run  -d -p 80 --name="${NAME}" ${ORG}/${NAME}
 
 restart: stop clean-containers run
 
@@ -64,4 +64,3 @@ google-undeploy:
 	# Delete the running pods with:
 	kubectl delete rc ${SVCNAME} --ignore-not-found=true
 	kubectl delete po ${SVCNAME} --ignore-not-found=true
-	
