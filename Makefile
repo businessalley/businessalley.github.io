@@ -2,14 +2,15 @@ NAME=www
 ORG=bizally
 CMD=/bin/bash
 SVCNAME=${ORG}${NAME}
+PROJECTID=odoo-ba
 
-compile: build
+all: redeploy
 
 build:
 	docker build --rm -t "${ORG}/${NAME}" .
 
-run: compile
-	docker run  -d -p 80:3000 --name="${NAME}" ${ORG}/${NAME}
+run: build
+	docker run  -d -p 80:80 --name="${NAME}" ${ORG}/${NAME}
 
 restart: stop clean-containers run
 
@@ -30,8 +31,9 @@ redeploy-no-push: google-undeploy google-deploy-no-push
 redeploy: google-undeploy google-deploy
 
 google-push: build
-	docker tag -f ${ORG}/${NAME} gcr.io/odoo-ba/${NAME}
-	gcloud docker push gcr.io/odoo-ba/${NAME}
+	docker tag -f ${ORG}/${NAME} gcr.io/${PROJECTID}/${NAME}
+	# gcloud docker rmi gcr.io/${PROJECTID}/${NAME}
+	gcloud docker push gcr.io/${PROJECTID}/${NAME}
 
 save:
 	git add -A
@@ -39,17 +41,19 @@ save:
 	git push github master
 
 google-deploy-no-push:
-	kubectl run ${SVCNAME} --image=gcr.io/odoo-ba/${NAME} --port=80
+	kubectl run ${SVCNAME} --image=gcr.io/${PROJECTID}/${NAME} --port=80
 	kubectl expose rc ${SVCNAME} --type="LoadBalancer"
 
 google-deploy: google-push
-	kubectl run ${SVCNAME} --image=gcr.io/odoo-ba/${NAME} --port=80
+	kubectl run ${SVCNAME} --image=gcr.io/${PROJECTID}/${NAME} --port=80
 	kubectl expose rc ${SVCNAME} --type="LoadBalancer"
-
+	#
+	#
 	# SLEEPING for 5 minutes to give google time to start load balancer and containers
 	# ================================================================================
 	sleep 300
-
+	#
+	#
 	# Getting the external IP address to use for the domain registrar CNAME
 	# =====================================================================
 	kubectl get svc ${SVCNAME} -o json | jq '.status.loadBalancer.ingress[0].ip'
@@ -60,3 +64,4 @@ google-undeploy:
 	# Delete the running pods with:
 	kubectl delete rc ${SVCNAME} --ignore-not-found=true
 	kubectl delete po ${SVCNAME} --ignore-not-found=true
+	
